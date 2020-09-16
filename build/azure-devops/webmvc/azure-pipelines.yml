@@ -22,6 +22,6 @@ jobs:
 - template: ../multiarch.yaml
   parameters:
     image: webmvc
-    branch: $(Build.SourceBranchName)
+    branch: test/azure-devops
     registry: sughosneo
     registryEndpoint: $(registryEndpoint)
