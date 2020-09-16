@@ -23,4 +23,5 @@ jobs:
   parameters:
     image: webmvc
     branch: $(Build.SourceBranchName)
+    registry: sughosneo
     registryEndpoint: $(registryEndpoint)
