@@ -1,5 +1,5 @@
 variables:
-    registryEndpoint: sughosneo
+    registryEndpoint: sughosneo-registry
 trigger:
   branches:
     include:
