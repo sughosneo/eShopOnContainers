@@ -42,6 +42,7 @@ jobs:
       projectName: ""
       dockerComposeFileArgs: |
         TAG=${{ variables['Build.SourceBranchName'] }}
+        REGISTRY=sughosneo
   - task: DockerCompose@0
     displayName: Compose push ${{ parameters.images }}
     inputs:
