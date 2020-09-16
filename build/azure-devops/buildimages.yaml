@@ -54,6 +54,7 @@ jobs:
       projectName: ""
       dockerComposeFileArgs: |
         TAG=${{ variables['Build.SourceBranchName'] }}
+        REGISTRY=sughosneo
   - task: CopyFiles@2
     inputs:
       sourceFolder: ${{ parameters.helmfrom }}
