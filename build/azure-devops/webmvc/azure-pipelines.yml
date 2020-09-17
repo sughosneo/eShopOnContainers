@@ -3,7 +3,8 @@ variables:
 trigger:
   branches:
     include:
-    - test/azure-devops
+    - master
+    - dev
   paths:
     include:
     - src/BuildingBlocks/*
