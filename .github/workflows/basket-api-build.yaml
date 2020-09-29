@@ -1,0 +1,23 @@
+name: eShop basket.api build
+
+on:
+  pull_request:
+    paths: 
+    - 'src/Services/Basket/**'
+    branches: [ feature/enable-github-actions ]          
+
+env:
+  SERVICE_NAME: basket-api           
+
+jobs:
+
+  build-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Get code from the repo
+      uses: actions/checkout@v1
+
+    - name: Build eShop basket.api docker image.
+      run: |
+        docker-compose -f src/docker-compose.yml build ${{ env.SERVICE_NAME }}
