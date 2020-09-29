@@ -17,7 +17,7 @@ env:
   API_NAME: catalog.api
   MODIFIED_API_NAME: catalogapi
   SERVICE_NAME: catalog-api           
-  TAG_NAME: linux-latest
+  TAG_NAME: latest
 
 jobs:
 
