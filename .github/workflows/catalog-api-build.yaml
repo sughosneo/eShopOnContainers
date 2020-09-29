@@ -59,4 +59,4 @@ jobs:
 
     - name: Push eShop catalog.api docker image
       run: | 
-        docker push ${{ env.DOCKER_REGISTRY_NAME }}/${{ env.OWNER_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.APP_NAME }}/${{ env.MODIFIED_API_NAME }}:latest
+        docker push ${{ env.DOCKER_REGISTRY_NAME }}/${{ env.OWNER_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.APP_NAME }}/${{ env.MODIFIED_API_NAME }}
