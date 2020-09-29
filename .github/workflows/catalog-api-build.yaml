@@ -12,7 +12,7 @@ on:
 env:  
   DOCKER_REGISTRY_NAME: docker.pkg.github.com
   OWNER_NAME: sughosneo
-  REPOSITORY_NAME: eShopOnContainers
+  REPOSITORY_NAME: eshoponcontainers
   APP_NAME: eshop
   API_NAME: catalog.api
   SERVICE_NAME: catalog-api           
@@ -54,8 +54,8 @@ jobs:
 
     - name: Re-tag the docker image
       run: |
-        docker image tag ${{ env.APP_NAME }}/${{ env.API_NAME }}:${{ env.TAG_NAME }}  ${{ env.DOCKER_REGISTRY_NAME }}/${{ env.OWNER_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REGISTRY_NAME }}/${{ env.API_NAME }}:${{ env.TAG_NAME }}
+        docker image tag ${{ env.APP_NAME }}/${{ env.API_NAME }}:${{ env.TAG_NAME }}  ${{ env.DOCKER_REGISTRY_NAME }}/${{ env.OWNER_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.APP_NAME }}/${{ env.API_NAME }}:${{ env.TAG_NAME }}
 
     - name: Push eShop catalog.api docker image
       run: | 
-        docker push ${{ env.DOCKER_REGISTRY_NAME }}/${{ env.OWNER_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.REGISTRY_NAME }}/${{ env.API_NAME }}:${{ env.TAG_NAME }}
+        docker push ${{ env.DOCKER_REGISTRY_NAME }}/${{ env.OWNER_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.APP_NAME }}/${{ env.API_NAME }}:${{ env.TAG_NAME }}
