@@ -39,8 +39,7 @@ jobs:
     - name: Push to GitHub Packages
       uses: docker/build-push-action@v1
       with:
-        context: '/src/Services/Catalog/Catalog.API'
-        file: ./Dockerfile           
+        path: /src/Services/Catalog/Catalog.API        
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com        
