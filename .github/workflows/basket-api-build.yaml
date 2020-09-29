@@ -1,4 +1,4 @@
-name: eShop basket.api build
+name: basket-api-build
 
 on:
   pull_request:

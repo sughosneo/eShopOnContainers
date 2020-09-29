@@ -1,4 +1,4 @@
-name: eShop catalog.api build
+name: catalog-api-build
 
 on:
   pull_request:
