@@ -1,18 +1,23 @@
 name: catalog-api-build
 
 on:
+  push:
+    branches: [ feature/enable-github-actions, dev ]
+              
   pull_request:
     paths: 
     - 'src/Services/Catalog/**'
     branches: [ feature/enable-github-actions ]          
 
 env:
+  REPOSITORY_NAME: eshop
   SERVICE_NAME: catalog-api           
 
 jobs:
 
   build-docker-image:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
 
     - name: Get code from the repo
@@ -21,3 +26,19 @@ jobs:
     - name: Build eShop catalog.api docker image.
       run: |
         docker-compose -f src/docker-compose.yml build ${{ env.SERVICE_NAME }}
+
+  push_to_registry:
+    name: Push catalog-api docker image to GitHub Packages
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: ${{ env.REPOSITORY_NAME }}/${{ env.SERVICE_NAME }}
+          tag_with_ref: true
