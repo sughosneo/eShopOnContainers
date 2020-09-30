@@ -1,4 +1,4 @@
-name: order-api-build
+name: ordering-api-build
 
 on:
   push:    
@@ -12,8 +12,8 @@ on:
 env:
     
   APP_NAME: eshop
-  API_NAME: order.api
-  SERVICE_NAME: order-api
+  API_NAME: ordering.api
+  SERVICE_NAME: ordering-api
   TAG_NAME: linux-latest
 
 jobs:
