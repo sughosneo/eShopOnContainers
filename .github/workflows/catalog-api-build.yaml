@@ -17,6 +17,7 @@ env:
   API_NAME: catalog.api
   SERVICE_NAME: catalog-api
   TAG_NAME: linux-latest
+  UNIT_TEST_PROJECT_PATH: src/Services/Catalog/Catalog.UnitTests/Catalog.UnitTests.csproj
 
 jobs:
 
@@ -34,10 +35,10 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore ${{ env.UNIT_TEST_PROJECT_PATH }}
 
     - name: Build Unit Test project
-      run: dotnet build src/Services/Catalog/Catalog.UnitTests/Catalog.UnitTests.csproj --configuration Release --no-restore
+      run: dotnet build ${{ env.UNIT_TEST_PROJECT_PATH }} --configuration Release --no-restore
 
     - name: set pr build number (if pr)
       id: PRNUMBER
@@ -58,7 +59,7 @@ jobs:
       
       # Run tests with built project
     - name: Test PR      
-      run: dotnet test src/Services/Catalog/Catalog.UnitTests/Catalog.UnitTests.csproj --no-restore --no-build --configuration Release --logger:"liquid.md;LogFileName=${{github.workspace}}/${{env.file_name}};Title=${{env.title}};"
+      run: dotnet test ${{ env.UNIT_TEST_PROJECT_PATH }} --no-restore --no-build --configuration Release --logger:"liquid.md;LogFileName=${{github.workspace}}/${{env.file_name}};Title=${{env.title}};"
       
       # upload report as build artifact
     - name: Upload a Build Artifact
@@ -78,6 +79,7 @@ jobs:
         path: ${{env.file_name}}
 
   build-docker-image:
+    needs: test-coverage
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
