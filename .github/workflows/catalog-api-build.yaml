@@ -9,17 +9,71 @@ on:
     - 'src/Services/Catalog/**'
     branches: [ feature/enable-github-actions ]          
 
-env:  
-  DOCKER_REGISTRY_NAME: docker.pkg.github.com
-  OWNER_NAME: sughosneo
-  REPOSITORY_NAME: eshoponcontainers
+env:
+    
   APP_NAME: eshop
   API_NAME: catalog.api
-  MODIFIED_API_NAME: catalogapi
-  SERVICE_NAME: catalog-api           
+  SERVICE_NAME: catalog-api
   TAG_NAME: linux-latest
 
 jobs:
+
+  test-coverage:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+
+    - name: Get code from the repo
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Build Unit Test project
+      run: dotnet build src/Services/Catalog/Catalog.UnitTests/Catalog.UnitTests.csproj --configuration Release --no-restore
+
+    - name: set pr build number (if pr)
+      id: PRNUMBER
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: kkak10/pr-number-action@v1.3
+      
+      # Set report file and title 
+    - name: Set Test Title
+      run: | 
+            if ${{ github.event_name == 'pull_request' }}
+            then
+              echo "::set-env name=title::Test Run for PR #${{steps.PRNUMBER.outputs.pr}} (${{github.run_number}})"
+              echo "::set-env name=file_name::TestReport.${{steps.PRNUMBER.outputs.pr}}.${{github.run_number}}.md"
+            else
+              echo "::set-env name=title::Test Run ${{github.run_number}}"
+              echo "::set-env name=file_name::TestReport.${{github.run_number}}.md"
+            fi
+      
+      # Run tests with built project
+    - name: Test PR      
+      run: dotnet test src/Services/Catalog/Catalog.UnitTests/Catalog.UnitTests.csproj --no-restore --no-build --configuration Release --logger:"liquid.md;LogFileName=${{github.workspace}}/${{env.file_name}};Title=${{env.title}};"
+      
+      # upload report as build artifact
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      if: ${{always()}}
+      with:
+        name: 'Test Run'
+        path: ${{github.workspace}}/${{env.file_name}}
+      
+      # add report as PR comment (if PR)
+    - name: comment PR
+      uses: machine-learning-apps/pr-comment@master
+      if: ${{ github.event_name == 'pull_request' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        path: ${{env.file_name}}
 
   build-docker-image:
     runs-on: ubuntu-latest
@@ -34,29 +88,27 @@ jobs:
         docker-compose -f src/docker-compose.yml build ${{ env.SERVICE_NAME }}
 
   push_to_registry:    
-    name: Push catalog-api docker image to GitHub Packages
+    name: Push catalog-api docker image to Docker Hub
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     steps:
+      
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Check out the repo
+        uses: actions/checkout@v2      
+      
+      - name: Build eShop catalog.api docker image.
+        run: |
+          docker-compose -f src/docker-compose.yml build ${{ env.SERVICE_NAME }}
+      
+      - name: Re-tag the docker image
+        run: |
+          docker image tag ${{ env.APP_NAME }}/${{ env.API_NAME }}:${{ env.TAG_NAME }}  ${{ secrets.DOCKER_REPOSITORY_NAME }}/${{ env.API_NAME }}:${{ env.TAG_NAME }}
 
-    - name: Login to GitHub Packages Docker Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ${{ env.DOCKER_REGISTRY_NAME }}
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Check out the repo
-      uses: actions/checkout@v2      
-
-    - name: Build eShop catalog.api docker image.
-      run: |
-        docker-compose -f src/docker-compose.yml build ${{ env.SERVICE_NAME }}
-
-    - name: Re-tag the docker image
-      run: |
-        docker image tag ${{ env.APP_NAME }}/${{ env.API_NAME }}:${{ env.TAG_NAME }}  ${{ env.DOCKER_REGISTRY_NAME }}/${{ env.OWNER_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.MODIFIED_API_NAME }}:${{ env.TAG_NAME }}
-
-    - name: Push eShop catalog.api docker image
-      run: | 
-        docker push ${{ env.DOCKER_REGISTRY_NAME }}/${{ env.OWNER_NAME }}/${{ env.REPOSITORY_NAME }}/${{ env.MODIFIED_API_NAME }}:${{ env.TAG_NAME }}
+      - name: Push eShop catalog.api docker image
+        run: | 
+          docker push ${{ secrets.DOCKER_REPOSITORY_NAME }}/${{ env.API_NAME }}:${{ env.TAG_NAME }}
