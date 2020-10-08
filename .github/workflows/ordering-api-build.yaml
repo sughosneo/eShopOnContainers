@@ -1,7 +1,9 @@
 name: ordering-api-build
 
 on:
-  push:    
+  push:
+    paths: 
+    - 'src/Services/Ordering/**'    
     branches: [ feature/enable-github-actions, dev ]    
 
   pull_request:
