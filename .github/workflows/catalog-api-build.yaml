@@ -29,7 +29,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.101
+        dotnet-version: 3.1
 
     - name: Get code from the repo
       uses: actions/checkout@v2
@@ -94,6 +94,7 @@ jobs:
   push_to_registry:    
     name: Push catalog-api docker image to Docker Hub
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       
       - name: Login to DockerHub
