@@ -34,6 +34,9 @@ jobs:
     - name: Get code from the repo
       uses: actions/checkout@v2
 
+    - name: Install LiquidTestReports dependencies
+      run: dotnet add ${{ env.UNIT_TEST_PROJECT_PATH }} package LiquidTestReports.Markdown --version 0.2.4-beta
+
     - name: Install dependencies
       run: dotnet restore ${{ env.UNIT_TEST_PROJECT_PATH }}
 
@@ -59,7 +62,7 @@ jobs:
       
       # Run tests with built project
     - name: Test PR      
-      run: dotnet test ${{ env.UNIT_TEST_PROJECT_PATH }} --no-restore --no-build --configuration Release --logger "trx;LogFileName=${{github.workspace}}/${{env.file_name}};Title=${{env.title}};"
+      run: dotnet test ${{ env.UNIT_TEST_PROJECT_PATH }} -l "liquid.md;LogFileName=${{github.workspace}}/${{env.file_name}};Title=${{env.title}};"
       
       # upload report as build artifact
     - name: Upload a Build Artifact
