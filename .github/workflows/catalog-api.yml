@@ -110,7 +110,10 @@ jobs:
       env:
         TAG: ${{ env.BRANCH }}
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-
+    
+    - name: List of Docker images
+      run: sudo -E docker images
+      
     - name: Compose push ${{ env.SERVICE }}
       run: sudo -E docker-compose push ${{ env.SERVICE }}
       working-directory: ./src
@@ -118,7 +121,7 @@ jobs:
       env:
         TAG: ${{ env.BRANCH }}
         REGISTRY: ${{ secrets.REGISTRY_ENDPOINT }}
-
+        
     - name: Create multiarch manifest
       run: |
         docker --config ~/.docker manifest create ${{ secrets.REGISTRY_ENDPOINT  }}/${{ env.IMAGE  }}:${{ env.BRANCH  }} ${{ secrets.REGISTRY_ENDPOINT  }}/${{ env.IMAGE  }}:linux-${{ env.BRANCH  }}
