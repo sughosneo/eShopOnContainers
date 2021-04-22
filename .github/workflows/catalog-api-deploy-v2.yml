@@ -7,7 +7,7 @@ on:
     - deploy
   workflow_run:
     workflows: ["catalog-api"]
-    branches: [dev]
+    branches: [pr1649]
     types: [completed]
 
 env:
