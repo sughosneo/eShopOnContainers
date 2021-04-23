@@ -15,10 +15,11 @@ env:
   CHART: catalog-api
   NAMESPACE: eshop
   CHART_ROOT: deploy/k8s/helm
-  IS_CD_ENABLED: false
 
 jobs:
   deploy-to-k8s:
+    env:
+      IS_CD_ENABLED: false
     if: ${{ env.IS_CD_ENABLED }} && ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
