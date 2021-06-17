@@ -13,7 +13,7 @@ service:
   grpcPort: 81
 
 ingress:
-  enabled: false
+  enabled: true
   annotations: {}
   tls: []
 

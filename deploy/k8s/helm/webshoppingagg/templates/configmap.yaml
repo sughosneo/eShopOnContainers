@@ -27,3 +27,4 @@ data:
   internalurls__grpcCatalog: "http://{{ .Values.app.svc.catalog }}:{{ .Values.service.grpcPort }}"
   internalurls__grpcOrdering: "http://{{ .Values.app.svc.ordering }}:{{ .Values.service.grpcPort }}"
   urls__IdentityUrlExternal: {{ $protocol }}://{{ $identity }}
+  PATH_BASE: /webshoppingagg
